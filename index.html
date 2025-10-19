@@ -167,7 +167,7 @@
             document.getElementById('aceticAcidConc').textContent = aceticAcidConc.toFixed(5);
             document.getElementById('hIonConc').textContent = hIonConc.toFixed(5);
             document.getElementById('dissociationDegree').textContent = dissociationDegree.toFixed(4);
-            document.getElementById('dissociationConst').textContent = dissociationConst.toExponential(3);
+            document.getElementById('dissociationConst').textContent = dissociationConst.toFixed(7);  // 不再用 toExponential
             
             document.getElementById('result').style.display = 'block';
         }
