@@ -1,176 +1,103 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>醋酸解离度和解离常数计算</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #f8f9fa;
-        }
-        .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .input-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: inline-block;
-            width: 200px;
-            font-weight: 600;
-            color: #34495e;
-        }
-        input[type="number"] {
-            width: 150px;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-        button {
-            background-color: #3498db;
-            color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            display: block;
-            margin: 30px auto;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        .result {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #ecf0f1;
-            border-radius: 5px;
-        }
-        .result-item {
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-        .result-label {
-            font-weight: 600;
-            color: #2c3e50;
-            display: inline-block;
-            width: 200px;
-        }
-        .formula {
-            background-color: #e8f4f8;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: #2c3e50;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>醋酸解离度与解离常数测定</title>
+<style>
+  body{max-width:720px;margin:40px auto;padding:20px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;background:#f7f9fc;color:#333}
+  h1{text-align:center;color:#2c3e50}
+  .card{background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.08);padding:25px;margin-bottom:25px}
+  label{display:inline-block;width:200px;font-weight:600;margin-bottom:10px}
+  input{width:140px;padding:8px;border:1px solid #ccc;border-radius:4px;font-size:16px}
+  button{background:#3498db;color:#fff;padding:10px 28px;border:none;border-radius:4px;font-size:16px;cursor:pointer;margin:20px auto;display:block}
+  button:hover{background:#2980b9}
+  .result{margin-top:20px;line-height:1.8}
+  .result span{font-weight:600;color:#34495e}
+  pre{background:#f4f6f8;border:1px solid #e1e4e8;border-radius:6px;padding:15px;font-size:14px;white-space:pre-wrap;word-wrap:break-word}
+  details{margin-top:20px}
+  summary{font-weight:600;cursor:pointer;color:#3498db}
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>醋酸解离度和解离常数测定</h1>
-        
-        <div class="formula">
-            <strong>计算公式：</strong><br>
-            1. 醋酸浓度：c = C(NaOH) × V(NaOH) / V(醋酸)<br>
-            2. 氢离子浓度：[H⁺] = 10^(-pH)<br>
-            3. 解离度：α = [H⁺] / c<br>
-            4. 解离常数：Ka = [H⁺]² / (c - [H⁺])
-        </div>
 
-        <div class="input-group">
-            <label for="naohVolume">消耗NaOH体积 (mL)：</label>
-            <input type="number" id="naohVolume" step="0.01" required>
-        </div>
+<h1>醋酸解离度与解离常数测定</h1>
 
-        <div class="input-group">
-            <label for="ph">醋酸溶液pH值：</label>
-            <input type="number" id="ph" step="0.01" required>
-        </div>
+<div class="card">
+  <div style="margin-bottom:15px"><strong>已知条件</strong></div>
+  <label>NaOH 标准浓度：</label>0.09746 mol·dm⁻³<br>
+  <label>醋酸取样体积：</label>25.00 mL
+</div>
 
-        <div class="input-group">
-            <label>已知条件：</label>
-            <span>NaOH浓度 = 0.09746 mol/L</span>
-        </div>
+<div class="card">
+  <div style="margin-bottom:15px"><strong>输入实验数据</strong></div>
+  <label>消耗 NaOH 体积 (mL)：</label>
+  <input id="vNaoh" type="number" step="0.01" placeholder="如 24.20"><br>
+  <label>醋酸溶液 pH 值：</label>
+  <input id="ph" type="number" step="0.01" placeholder="如 2.75"><br>
+  <button onclick="calc()">开始计算</button>
+</div>
 
-        <div class="input-group">
-            <label>&nbsp;</label>
-            <span>醋酸体积 = 25 mL</span>
-        </div>
+<!-- 结果区 -->
+<div id="resCard" class="card" style="display:none">
+  <div style="margin-bottom:15px"><strong>计算结果</strong></div>
+  <div class="result">
+    ① 醋酸标签浓度　c = <span id="c"></span> mol·dm⁻³<br>
+    ② 氢离子浓度　[H⁺] = <span id="h"></span> mol·dm⁻³<br>
+    ③ 解离度　α = <span id="alpha"></span><br>
+    ④ 解离常数　Ka = <span id="ka"></span>
+  </div>
 
-        <button onclick="calculate()">计算</button>
+  <!-- 展开详情 = 完整计算过程 -->
+  <details>
+    <summary>查看详细计算过程</summary>
+    <pre id="step"></pre>
+  </details>
+</div>
 
-        <div class="result" id="result" style="display: none;">
-            <h3>计算结果：</h3>
-            <div class="result-item">
-                <span class="result-label">醋酸浓度：</span>
-                <span id="aceticAcidConc"></span> mol/dm³
-            </div>
-            <div class="result-item">
-                <span class="result-label">氢离子浓度 [H⁺]：</span>
-                <span id="hIonConc"></span> mol/dm³
-            </div>
-            <div class="result-item">
-                <span class="result-label">解离度 (α)：</span>
-                <span id="dissociationDegree"></span>
-            </div>
-            <div class="result-item">
-                <span class="result-label">解离常数 (Ka)：</span>
-                <span id="dissociationConst"></span>
-            </div>
-        </div>
-    </div>
+<script>
+function calc(){
+  const Cnaoh=0.09746, Vx=25.00;          // 固定常数
+  const Vn=parseFloat(document.getElementById('vNaoh').value);
+  const pH=parseFloat(document.getElementById('ph').value);
+  if(!Vn||!pH){alert('请输入完整数据');return;}
 
-    <script>
-        function calculate() {
-            // 获取输入值
-            const naohVolume = parseFloat(document.getElementById('naohVolume').value);
-            const ph = parseFloat(document.getElementById('ph').value);
-            
-            // 检查输入
-            if (isNaN(naohVolume) || isNaN(ph)) {
-                alert('请输入有效的数值！');
-                return;
-            }
-            
-            // 已知数据
-            const naohConc = 0.09746; // mol/L
-            const aceticAcidVolume = 25; // mL
-            
-            // 计算醋酸浓度 (mol/dm³ = mol/L)
-            const aceticAcidConc = (naohConc * naohVolume) / aceticAcidVolume;
-            
-            // 计算氢离子浓度
-            const hIonConc = Math.pow(10, -ph);
-            
-            // 计算解离度
-            const dissociationDegree = hIonConc / aceticAcidConc;
-            
-            // 计算解离常数
-            const dissociationConst = (hIonConc * hIonConc) / (aceticAcidConc - hIonConc);
-            
-            // 显示结果
-            document.getElementById('aceticAcidConc').textContent = aceticAcidConc.toFixed(5);
-            document.getElementById('hIonConc').textContent = hIonConc.toFixed(5);
-            document.getElementById('dissociationDegree').textContent = dissociationDegree.toFixed(4);
-            document.getElementById('dissociationConst').textContent = dissociationConst.toFixed(7);  // 不再用 toExponential
-            
-            document.getElementById('result').style.display = 'block';
-        }
-    </script>
+  // 核心计算
+  const c=Cnaoh*Vn/Vx;                    // mol·dm⁻³
+  const h=Math.pow(10,-pH);               // mol·dm⁻³
+  const alpha=h/c;
+  const ka=h*h/(c-h);                     // 精确式
+
+  // 结果插值
+  document.getElementById('c').textContent=c.toFixed(5);
+  document.getElementById('h').textContent=h.toFixed(5);
+  document.getElementById('alpha').textContent=alpha.toFixed(4)+' ('+(alpha*100).toFixed(2)+'%)';
+  document.getElementById('ka').textContent=ka.toFixed(7)+' ('+ka.toExponential(3)+')';
+
+  // 生成步骤文字
+  const stepTxt=
+`1. 计算醋酸标签浓度 c：
+   c = C(NaOH) × V(NaOH) / V(HAc)
+   c = 0.09746 mol·dm⁻³ × ${Vn.toFixed(2)} mL / 25.00 mL
+   c = ${c.toFixed(5)} mol·dm⁻³
+
+2. 由 pH 求 [H⁺]：
+   [H⁺] = 10^(−pH) = 10^(−${pH.toFixed(2)})
+   [H⁺] = ${h.toFixed(5)} mol·dm⁻³
+
+3. 解离度 α：
+   α = [H⁺] / c = ${h.toFixed(5)} / ${c.toFixed(5)}
+   α = ${alpha.toFixed(4)} ≈ ${(alpha*100).toFixed(2)}%
+
+4. 解离常数 Ka（平衡表达式）：
+   Ka = [H⁺]² / (c − [H⁺])
+   Ka = (${h.toFixed(5)})² / (${c.toFixed(5)} − ${h.toFixed(5)})
+   Ka = ${(h*h).toFixed(7)} / ${(c-h).toFixed(5)}
+   Ka = ${ka.toFixed(7)} ≈ ${ka.toExponential(3)}`;
+  document.getElementById('step').textContent=stepTxt;
+
+  document.getElementById('resCard').style.display='block';
+}
+</script>
+
 </body>
 </html>
